@@ -1,2 +1,2 @@
 # poke_api
-api de pokemon cart IN PYTHON`s
+Api REST de pokemon cart IN PYTHON`s
