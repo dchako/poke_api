@@ -6,8 +6,8 @@ class Cards(models.Model):
     name = models.CharField(max_length=50, unique=True)
     hp = models.PositiveIntegerField(default=0, )
     start_date = models.DateTimeField(default=datetime.now(), blank=True)
-    types = models.ForeignKey('Types')
-    expansion = models.ForeignKey('Expansion')
+    types = models.ForeignKey('Types', related_name='types')
+    expansion = models.ForeignKey('Expansion', related_name='expansions')
     rarity = models.ChoiceField(
                   choices=(
                             ("COMUN", "comun"),
