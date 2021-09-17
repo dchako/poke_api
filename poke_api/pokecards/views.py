@@ -60,7 +60,7 @@ class CardsView(APIView):
         return Response({"message": "Cards with id `{}` has been deleted.".format(pk)},status=204)
 
 class CreateTypesView(APIView):
-    def post(self, request):
+    def post(self, request, pk=None):
         token = request.COOKIES.get('jwt')
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -73,12 +73,12 @@ class CreateTypesView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-    def get(self, request):
-        types =  get_object_or_404(Types.objects.filter(name=request.data.get('name')).first())
+    def get(self, request, pk=None):
+        types =  get_object_or_404(Types.objects.filter(types=request.data.get('types')).first())
         serializer = TypesSerializer(types)
         return Response(serializer.data)
 
-    def put(self, request, pk):
+    def put(self, request, pk=None):
         saved_types = get_object_or_404(Types.objects.all(), pk=pk)
         data = request.data
         serializer = TypesSerializer(instance=saved_types, data=data, partial=True)
@@ -116,7 +116,7 @@ class CreateExpansionView(APIView):
         return Response(serializer.data)
 
     def get(self, request):
-        expansion =  get_object_or_404(Expansion.objects.filter(name=request.data.get('name')).first())
+        expansion =  get_object_or_404(Expansion.objects.filter(expansion=request.data.get('expansion')).first())
         serializer = ExpansionSerializer(expansion)
         return Response(serializer.data)
 
