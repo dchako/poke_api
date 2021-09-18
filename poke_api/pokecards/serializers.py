@@ -29,16 +29,20 @@ class ExpansionSerializer(serializers.HyperlinkedModelSerializer):
 class CardsSerializer(serializers.HyperlinkedModelSerializer):
     types = TypesSerializer(read_only=True)
     expansion = ExpansionSerializer(read_only=True)
+    types_id = serializers.IntegerField()
+    expansion_id = serializers.IntegerField()
     
     def create(self, validated_data):
         return Cards.objects.create(**validated_data)
     class Meta:
         model = Cards
-        fields = ['name', 'hp', 'types','start_date','expansion','is_firts_edition','rarity','price','image_cards','pk']
+        fields = ['name', 'hp', 'types_id','start_date','expansion','is_firts_edition','rarity','price','image_cards','pk','types','expansion_id']
         extra_kwargs = {
             'name': {'required': True},
             'hp': {'required': True},
             'is_firts_edition': {'required': True},
             'price': {'required': True},
             'rarity': {'required': True},
+            'expansion_id': {'required': True},
+            'types_id': {'required': True},
         }

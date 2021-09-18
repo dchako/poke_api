@@ -4,7 +4,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import AuthenticationFailed, NotAcceptable
+from rest_framework.exceptions import AuthenticationFailed, NotAcceptable, NotFound
 from .serializers import CardsSerializer, TypesSerializer, ExpansionSerializer
 from .models import Cards, Expansion, Types
 import jwt, datetime
@@ -32,14 +32,14 @@ class CardsView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        card = get_object_or_404(Cards.objects.filter(name=request.data.get('name',' ')).first())
+        card = get_object_or_404(Cards.objects.all(), name=request.data.get('name',' '))
         serializer = CardsSerializer(card)
         return Response(serializer.data)
 
     def put(self, request, pk):
         saved_cards = get_object_or_404(Cards.objects.all(), pk=pk)
         data = request.data
-        serializer = TypesSerializer(instance=saved_cards, data=data, partial=True)
+        serializer = CardsSerializer(instance=saved_cards, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             cards_saved = serializer.save()
         return Response({"success": "Card '{}' updated successfully".format(cards_saved.name)})
@@ -55,6 +55,7 @@ class CardsView(APIView):
             payload = jwt.decode(token, 'secret', algorithm=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
+
         cards = get_object_or_404(Cards.objects.all(), pk=pk)
         cards.delete()
         return Response({"message": "Cards with id `{}` has been deleted.".format(pk)},status=204)
@@ -74,7 +75,7 @@ class CreateTypesView(APIView):
         return Response(serializer.data)
 
     def get(self, request, pk=None):
-        types =  get_object_or_404(Types.objects.filter(types=request.data.get('types')).first())
+        types =  get_object_or_404(Types.objects.all(),types=request.data.get('types'))
         serializer = TypesSerializer(types)
         return Response(serializer.data)
 
@@ -96,7 +97,6 @@ class CreateTypesView(APIView):
             payload = jwt.decode(token, 'secret', algorithm=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
-
         types = get_object_or_404(Types.objects.all(), pk=pk)
         types.delete()
         return Response({"message": "Types  with id `{}` has been deleted.".format(pk)},status=204)
@@ -116,7 +116,7 @@ class CreateExpansionView(APIView):
         return Response(serializer.data)
 
     def get(self, request):
-        expansion =  get_object_or_404(Expansion.objects.filter(expansion=request.data.get('expansion')).first())
+        expansion =  get_object_or_404(Expansion.objects.all(), expansion=request.data.get('expansion'))
         serializer = ExpansionSerializer(expansion)
         return Response(serializer.data)
 
@@ -138,7 +138,6 @@ class CreateExpansionView(APIView):
             payload = jwt.decode(token, 'secret', algorithm=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
-
         expansion = get_object_or_404(Expansion.objects.all(), pk=pk)
         expansion.delete()
         return Response({"message": "Expansion with id `{}` has been deleted.".format(pk)},status=204)
@@ -150,5 +149,3 @@ class GetAndFindCardsView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['name', 'is_firts_edition','rarity','price']
     search_fields = ['name', 'is_firts_edition']
-
-
