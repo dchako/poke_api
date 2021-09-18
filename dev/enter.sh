@@ -20,6 +20,7 @@ then
     export DB_USER="dchako"
     export DB_PASSWORD="mypassword"
     export DB_PORT="3306"
+    export DEBUG=False
 	
 fi
 
