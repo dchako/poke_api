@@ -35,11 +35,11 @@ class CardsSerializer(serializers.HyperlinkedModelSerializer):
     
     def create(self, validated_data):
         try:
-            expansion = Expansion.objects.get(pk=int(validated_data.pop('expansion_id')))
+            expansion = Expansion.objects.get(pk=int(validated_data.get('expansion_id')))
         except Expansion.DoesNotExist:
             raise NotFound('Expansion not Encontrado!')
         try:
-            types = Types.objects.get(pk=int(validated_data.pop('types_id')))
+            types = Types.objects.get(pk=int(validated_data.get('types_id')))
         except Types.DoesNotExist:
             raise NotFound('Types not Encontrado!')
         return Cards.objects.create(**validated_data)
@@ -54,5 +54,5 @@ class CardsSerializer(serializers.HyperlinkedModelSerializer):
             'price': {'required': True},
             'rarity': {'required': True},
             'expansion_id': {'required': True},
-            'types_id': {'required': True},
+            'types_id': {'required': True}
         }
