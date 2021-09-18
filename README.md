@@ -15,7 +15,7 @@ una vez realizado esto podremos ejecutar la api POKE de la siguiente manera.
 - Run: `m runserver`
 
 ## Swagger docs
-- /apidocs
+- /swagger/
 
 ## Required Environment Variables
 - DB_USER
