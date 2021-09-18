@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'pokecards',
-    'django_filters'
+    'django_filters',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [

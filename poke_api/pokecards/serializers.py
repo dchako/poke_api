@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Cards, Types, Expansion
+from rest_framework.exceptions import NotFound
 
 
 class TypesSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,10 +34,19 @@ class CardsSerializer(serializers.HyperlinkedModelSerializer):
     expansion_id = serializers.IntegerField()
     
     def create(self, validated_data):
+        try:
+            expansion = Expansion.objects.get(pk=int(validated_data.pop('expansion_id')))
+        except Expansion.DoesNotExist:
+            raise NotFound('Expansion not Encontrado!')
+        try:
+            types = Types.objects.get(pk=int(validated_data.pop('types_id')))
+        except Types.DoesNotExist:
+            raise NotFound('Types not Encontrado!')
         return Cards.objects.create(**validated_data)
+
     class Meta:
         model = Cards
-        fields = ['name', 'hp', 'types_id','start_date','expansion','is_firts_edition','rarity','price','image_cards','pk','types','expansion_id']
+        fields = ['name', 'hp','start_date','expansion','is_firts_edition','rarity','price','image_cards','pk','types','expansion_id','types_id']
         extra_kwargs = {
             'name': {'required': True},
             'hp': {'required': True},
